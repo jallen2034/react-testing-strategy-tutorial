@@ -1,7 +1,7 @@
-import {fireEvent, render, screen} from "@testing-library/react"
-import TransactionCreateStepTwo, {TransactionCreateStepTwoProps} from "./TransactionCreateStepTwo";
+import {render, screen} from "@testing-library/react"
+import TransactionCreateStepTwo from "./TransactionCreateStepTwo";
 import {DefaultPrivacyLevel, User} from "../models";
-import {act} from "react-dom/test-utils";
+import userEvent from "@testing-library/user-event"
 
 // Mock a date to be the current date
 const mockDate: Date = new Date();
@@ -23,12 +23,14 @@ const mockUser: User = {
   modifiedAt: mockDate,
 };
 
+const mockShowSnackbar: any = jest.fn();
+
 // Mock the props that we want to pass into our rendered TransactionCreateStepTwo component in our test
-const mockedTransactionCreateStepTwoProps: TransactionCreateStepTwoProps = {
+const mockedTransactionCreateStepTwoProps: any = {
   sender: mockUser,
   receiver: mockUser,
   createTransaction: () => {}, // Empty function
-  showSnackbar: () => {}, // Empty function
+  mockShowSnackbar
 };
 
 test("on initial render, the pay button is disabled", async () => {
@@ -36,17 +38,22 @@ test("on initial render, the pay button is disabled", async () => {
   expect(await screen.findByRole("button", { name: /pay/i })).toBeDisabled();
 });
 
-test("clicking the pay button changes transactionType to 'payment'", async () => {
+test("Button enables when user enters their information to submit a transaction", async () => {
+  const user: any = userEvent.setup();
+
   render(<TransactionCreateStepTwo {...mockedTransactionCreateStepTwoProps} />);
 
-  const payButton: HTMLElement = screen.getByRole("button", { name: /pay/i });
+  // Get fields user will interact with
+  const amountInput: HTMLElement = screen.getByPlaceholderText("Amount");
+  const descriptionInput: HTMLElement = screen.getByPlaceholderText("Add a note");
+  const payButton: HTMLElement = screen.getByText("Pay");
 
-  // Simulate a click on the "Pay" button
-  act(() => {
-    fireEvent.click(payButton);
-  });
+  await user.click(amountInput)
+  await user.keyboard("$34,534")
 
-  // Now, check if the transactionType state has changed to "payment"
-  const transactionTypeText: HTMLElement = screen.getByText(/payment/i);
-  expect(transactionTypeText).toBeInTheDocument();
+  await user.click(descriptionInput)
+  await user.keyboard("Spaghetti money")
+
+  // Expect the button to not be disabled and clickable
+  expect(payButton).not.toBeDisabled();
 });
