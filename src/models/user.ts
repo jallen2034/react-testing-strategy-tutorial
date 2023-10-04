@@ -4,7 +4,7 @@ export enum DefaultPrivacyLevel {
   contacts = "contacts",
 }
 
-export interface User {
+export type User = {
   id: string;
   uuid: string;
   firstName: string;
