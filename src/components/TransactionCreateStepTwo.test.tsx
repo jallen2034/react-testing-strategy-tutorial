@@ -29,16 +29,17 @@ const mockShowSnackbar: any = jest.fn();
 const mockedTransactionCreateStepTwoProps: any = {
   sender: mockUser,
   receiver: mockUser,
-  createTransaction: () => {}, // Empty function
+  createTransaction: () => {
+  }, // Empty function
   mockShowSnackbar
 };
 
-test("on initial render, the pay button is disabled", async () => {
+test("on initial render, the pay button is disabled", async (): Promise<void> => {
   render(<TransactionCreateStepTwo {...mockedTransactionCreateStepTwoProps} />);
-  expect(await screen.findByRole("button", { name: /pay/i })).toBeDisabled();
+  expect(await screen.findByRole("button", {name: /pay/i})).toBeDisabled();
 });
 
-test("Button enables when user enters their information to submit a transaction", async () => {
+test("Button enables when user enters their information", async (): Promise<void> => {
   const user: any = userEvent.setup();
 
   render(<TransactionCreateStepTwo {...mockedTransactionCreateStepTwoProps} />);
