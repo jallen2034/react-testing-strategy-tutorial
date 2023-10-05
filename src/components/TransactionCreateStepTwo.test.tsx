@@ -34,7 +34,7 @@ const mockedTransactionCreateStepTwoProps: any = {
   mockShowSnackbar
 };
 
-test("on initial render, the pay button is disabled", async (): Promise<void> => {
+test("On the initial render, the pay button is disabled", async (): Promise<void> => {
   render(<TransactionCreateStepTwo {...mockedTransactionCreateStepTwoProps} />);
   expect(await screen.findByRole("button", {name: /pay/i})).toBeDisabled();
 });
